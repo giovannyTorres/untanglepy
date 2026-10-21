@@ -18,13 +18,14 @@ assert result.source_rows == ((0, 1), (2, 3))
 
 ## Install
 
-Python 3.11+ and Pandas 2.2+ are required. Until the initial PyPI publication is
-verified, install from a checkout:
+Python 3.11+ and Pandas 2.2+ are required. Version
+[0.1.0 is published on PyPI](https://pypi.org/project/untanglepy/0.1.0/), with
+installation from the public index verified in a fresh environment.
 
 ```bash
-python -m pip install .
-# After the first verified PyPI release:
 python -m pip install untanglepy
+# Reproduce the verified release:
+python -m pip install "untanglepy==0.1.0"
 ```
 
 The package has no runtime network calls, telemetry or dependency on sibling projects.
