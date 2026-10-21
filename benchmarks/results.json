@@ -7,28 +7,28 @@
   "repeats": 5,
   "manual_pandas": {
     "seconds": [
-      0.02515750000020489,
-      0.0244697999996788,
-      0.019355999999788764,
-      0.02122140000028594,
-      0.02044839999962278
+      0.017672500000116997,
+      0.017008199999509088,
+      0.018194699999185104,
+      0.024287500000355067,
+      0.020757500000399887
     ],
-    "median_seconds": 0.02122140000028594,
-    "min_seconds": 0.019355999999788764,
-    "max_seconds": 0.02515750000020489,
+    "median_seconds": 0.018194699999185104,
+    "min_seconds": 0.017008199999509088,
+    "max_seconds": 0.024287500000355067,
     "traced_peak_bytes": 1057178
   },
   "untanglepy": {
     "seconds": [
-      0.06260300000030838,
-      0.07490760000018781,
-      0.10058920000028593,
-      0.0735607999995409,
-      0.06238680000024033
+      0.05466560000058962,
+      0.05569439999999304,
+      0.07925430000068445,
+      0.05656439999984286,
+      0.06317029999991064
     ],
-    "median_seconds": 0.0735607999995409,
-    "min_seconds": 0.06238680000024033,
-    "max_seconds": 0.10058920000028593,
+    "median_seconds": 0.05656439999984286,
+    "min_seconds": 0.05466560000058962,
+    "max_seconds": 0.07925430000068445,
     "traced_peak_bytes": 5010458
   },
   "notes": "Identical output values. Library additionally validates header payloads and records positional provenance. Timing without tracemalloc; separate traced peak excludes some native allocations and is not RSS."
