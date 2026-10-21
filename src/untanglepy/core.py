@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 import re
 from collections.abc import Hashable, Sequence
 from dataclasses import dataclass
@@ -94,12 +95,14 @@ def extract_subheaders(
     group_name: str,
     drop_empty: bool = True,
     require_group: bool = False,
+    match_mode: Literal["prefix", "full"] = "prefix",
 ) -> TransformResult:
     """Move explicit regex subheaders into a group column, retaining lineage.
 
     With one capturing group its value is extracted. Without captures, the
-    matched prefix is removed and the remainder stripped. Patterns with more
-    than one capture are rejected. A subheader may not contain other payload.
+    matched prefix is removed and the remainder stripped. Prefixes may not end
+    inside a word. Use ``match_mode="full"`` with one capture to require the
+    entire field to match. A subheader may not contain other payload.
     """
     source = _coerce(data)
     frame = source.frame
@@ -112,6 +115,10 @@ def extract_subheaders(
         raise StructureError(f"Invalid subheader regex: {exc}") from exc
     if regex.groups > 1:
         raise StructureError("Subheader pattern must have at most one capture group")
+    if match_mode not in {"prefix", "full"}:
+        raise StructureError("match_mode must be 'prefix' or 'full'")
+    if match_mode == "full" and regex.groups != 1:
+        raise StructureError("match_mode='full' requires one capture group")
     selected: list[int] = []
     groups: list[Any] = []
     lineage: list[tuple[int, ...]] = []
@@ -120,7 +127,17 @@ def extract_subheaders(
     colpos = cast(int, frame.columns.get_loc(column))
     for pos, row in enumerate(frame.itertuples(index=False, name=None)):
         value = row[colpos]
-        match = regex.match(value) if isinstance(value, str) else None
+        match = None
+        if isinstance(value, str):
+            match = regex.fullmatch(value) if match_mode == "full" else regex.match(value)
+            if (
+                match is not None
+                and 0 < match.end() < len(value)
+                and re.fullmatch(r"\w{2}", value[match.end() - 1 : match.end() + 1])
+            ):
+                # A literal 'Region' must not consume 'Regional' and turn the
+                # suffix into a group. Delimiters such as 'REGION:' still work.
+                match = None
         if match is not None:
             if any(not _blank(cell) for idx, cell in enumerate(row) if idx != colpos):
                 raise StructureError(f"Subheader at position {pos} also contains payload")
@@ -145,10 +162,11 @@ def propagate_groups(data: Table, *, columns: Sequence[Hashable]) -> TransformRe
     """Carry explicitly selected group columns down into structural blanks.
 
     Original nonblank values (including zero and False) are preserved. Leading
-    blanks remain unchanged. Every filled cell adds the donor row's provenance.
+    blanks remain unchanged. All column dtypes are preserved. Every filled cell
+    adds the donor row's provenance.
     """
     source = _coerce(data)
-    frame = source.frame.astype(object)
+    frame = source.frame
     selected = _columns(frame, columns)
     lineage = list(source.source_rows)
     for column in selected:
@@ -176,7 +194,8 @@ def merge_headers(
     """Combine selected current row positions into column names and remove them.
 
     Horizontal fill is opt-in and applied independently to each header row.
-    Empty pieces are omitted. Completely blank column headings are rejected.
+    Empty pieces are omitted. Integral floats omit their decimal suffix.
+    Completely blank column headings are rejected.
     ``suffix`` generates globally unique names, preserving natural base names.
     """
     source = _coerce(data)
@@ -202,7 +221,7 @@ def merge_headers(
                 else:
                     previous = value
     names = [
-        separator.join(str(row[colpos]) for row in header_rows if not _blank(row[colpos]))
+        separator.join(_header_piece(row[colpos]) for row in header_rows if not _blank(row[colpos]))
         for colpos in range(len(source.frame.columns))
     ]
     if any(not name for name in names):
@@ -231,6 +250,12 @@ def merge_headers(
     return TransformResult(
         frame, tuple(source.source_rows[pos] for pos in remaining), header_sources
     )
+
+
+def _header_piece(value: Any) -> str:
+    if pd.api.types.is_float(value) and math.isfinite(value) and value == int(value):
+        return str(int(value))
+    return str(value)
 
 
 def join_broken_rows(
@@ -298,6 +323,7 @@ def untangle(
     group_name: str,
     drop_empty: bool = True,
     require_group: bool = False,
+    match_mode: Literal["prefix", "full"] = "prefix",
 ) -> TransformResult:
     """Convenience alias for explicit subheader extraction."""
     return extract_subheaders(
@@ -307,4 +333,5 @@ def untangle(
         group_name=group_name,
         drop_empty=drop_empty,
         require_group=require_group,
+        match_mode=match_mode,
     )

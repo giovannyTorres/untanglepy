@@ -1,6 +1,7 @@
 # Release procedure and publication state
 
-Current version: **0.1.0**. **PyPI: PUBLISHED** at
+Current source version: **0.2.0** (publication pending).
+Latest verified public release: **0.1.0**, published at
 [untanglepy 0.1.0](https://pypi.org/project/untanglepy/0.1.0/).
 Installation from the public index was verified in a fresh environment, including
 `pip check`, executable examples and installed source identity.

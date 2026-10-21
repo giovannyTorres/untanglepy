@@ -1,4 +1,24 @@
-# Local validation record — untanglepy 0.1.0
+# Local validation record — untanglepy 0.2.0
+
+Recorded on 2026-10-21 (UTC), before publication, using Python 3.12.14 on Linux.
+
+- 60 tests passed with pandas 3.0.6, including all Hypothesis property tests.
+- The same 60 tests passed against the supported pandas 2.2.3 floor.
+- Statement coverage: 100% (181 of 181 measured statements) in both environments.
+- Ruff lint and formatting, Mypy, wheel/sdist build, and Twine checks passed.
+- Wheel and sdist installed independently into fresh environments; all shipped
+  examples passed with isolated imports.
+- New regressions first reproduced dtype coercion, integral-float headings,
+  and accidental partial-word subheaders before the fixes were applied.
+
+`match_mode="full"` deliberately requires one capture because prefix stripping
+cannot produce a nonempty group after matching an entire field. Prefix mode
+remains the default for compatibility with the documented `^REGION:` rules;
+matching a partial word is now rejected in either capture or no-capture rules.
+
+Publication is tracked separately in [RELEASE.md](RELEASE.md).
+
+## Historical validation — 0.1.0
 
 Recorded from completed local checks on 2026-10-21 (UTC).
 These results are separate from GitHub CI and from public PyPI installation.

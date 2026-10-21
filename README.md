@@ -18,14 +18,12 @@ assert result.source_rows == ((0, 1), (2, 3))
 
 ## Install
 
-Python 3.11+ and Pandas 2.2+ are required. Version
-[0.1.0 is published on PyPI](https://pypi.org/project/untanglepy/0.1.0/), with
-installation from the public index verified in a fresh environment.
+Python 3.11+ and Pandas 2.2+ are required.
+[Published versions are available on PyPI](https://pypi.org/project/untanglepy/).
+See [RELEASE.md](RELEASE.md) for the latest verified publication.
 
 ```bash
 python -m pip install untanglepy
-# Reproduce the verified release:
-python -m pip install "untanglepy==0.1.0"
 ```
 
 The package has no runtime network calls, telemetry or dependency on sibling projects.
@@ -58,9 +56,14 @@ can invalidate their correspondence.
 ## Rules and ambiguity
 
 Structural blanks are scalar missing values or empty/whitespace-only strings.
-Zero and False are values. Subheaders match from the start of a string using
-Python `re.match`. A pattern with one capture extracts exactly that capture.
+Zero and False are values. By default, subheaders match from the start of a string
+using Python `re.match`, but a prefix cannot end inside a Unicode word:
+`Region` matches `Region North`, while `Regional total` stays a data row.
+A pattern with one capture extracts exactly that capture.
 Without a capture, the matched prefix is removed and the remainder stripped.
+For strict whole-field rules, set `match_mode="full"` and supply one capture,
+for example `pattern=r"Region (North|South)"`. This uses `re.fullmatch`, so
+`Region North trailing` stays a data row. The same option is accepted by `untangle`.
 More than one capture or an empty extracted group raises `StructureError`.
 Rows matching a subheader must have blank other fields, preventing accidental
 payload loss. Group column collisions also raise.
@@ -68,10 +71,13 @@ payload loss. Group column collisions also raise.
 `extract_subheaders` drops fully blank rows by default; `drop_empty=False`
 retains them with lineage. Data preceding the first subheader gets group `None`;
 `require_group=True` rejects it. Matching context rows are removed intentionally.
-`propagate_groups` preserves leading blanks and all nonblank original values.
+`propagate_groups` preserves leading blanks, all nonblank original values, and
+every column's dtype, including columns selected for propagation.
 
 `merge_headers` accepts current positional rows in the order supplied. It omits
-blank pieces; horizontal propagation across each heading row requires explicit
+blank pieces and renders integral floats as `2024` rather than `2024.0`;
+fractional floats and original string headings retain their text representation.
+Horizontal propagation across each heading row requires explicit
 `fill_horizontal=True`. Every output column needs a nonblank heading. Generated
 duplicate names raise unless `duplicate_names="suffix"` is chosen. Suffixes
 are globally unique and reserve natural base names: `A, A, A_2` becomes
@@ -82,7 +88,7 @@ or MultiIndex labels raise with instructions to rename them explicitly.
 continuation is rejected. Only the named text columns concatenate two occupied
 strings, with the exact separator supplied. Elsewhere, a value can fill a blank
 or repeat an equal scalar; incompatible occupied values raise before returning
-a result. Outputs use object dtype for joined/propagated columns to avoid
+a result. `join_broken_rows` outputs use object dtype to avoid
 rounding large integers or coercing original objects when a neighbor is missing.
 No original value is converted to text except explicitly merged heading pieces
 and selected string concatenation.
@@ -114,13 +120,14 @@ irregular tables. It is inspired by [unheadr](https://github.com/luisDVA/unheadr
 whose broader functionality includes spreadsheet annotation. See
 [RESEARCH.md](RESEARCH.md) for the capability comparison and licenses.
 
-Version 0.1.0 accepts in-memory Pandas tables. CSV, Excel and PDF readers remain
+untanglepy accepts in-memory Pandas tables. CSV, Excel and PDF readers remain
 the caller's responsibility. There is no automatic layout detection, OCR, rich
 cell formatting support or Polars backend. Rules assume the caller knows which
 rows are headers or continuations; sparse data is not guessed into a structure.
 Lineage records row contribution, not a complete cell-level edit history. Blank
 rows intentionally dropped and unused trailing subheaders do not create output
-records. Dtypes can become object while original scalar values are retained.
+records. Joining broken rows produces object columns while preserving original
+scalar values; group propagation preserves original column dtypes.
 
 ## Validation and benchmark
 
