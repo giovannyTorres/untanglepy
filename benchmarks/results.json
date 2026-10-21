@@ -1,0 +1,35 @@
+{
+  "python": "3.13.5",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "pandas": "3.0.6",
+  "input_rows": 20000,
+  "output_rows": 19600,
+  "repeats": 5,
+  "manual_pandas": {
+    "seconds": [
+      0.02515750000020489,
+      0.0244697999996788,
+      0.019355999999788764,
+      0.02122140000028594,
+      0.02044839999962278
+    ],
+    "median_seconds": 0.02122140000028594,
+    "min_seconds": 0.019355999999788764,
+    "max_seconds": 0.02515750000020489,
+    "traced_peak_bytes": 1057178
+  },
+  "untanglepy": {
+    "seconds": [
+      0.06260300000030838,
+      0.07490760000018781,
+      0.10058920000028593,
+      0.0735607999995409,
+      0.06238680000024033
+    ],
+    "median_seconds": 0.0735607999995409,
+    "min_seconds": 0.06238680000024033,
+    "max_seconds": 0.10058920000028593,
+    "traced_peak_bytes": 5010458
+  },
+  "notes": "Identical output values. Library additionally validates header payloads and records positional provenance. Timing without tracemalloc; separate traced peak excludes some native allocations and is not RSS."
+}
