@@ -1,0 +1,175 @@
+{
+  "schema_version": 1,
+  "generated_at_utc": "2026-10-22T05:56:35.314424+00:00",
+  "package": "untanglepy",
+  "versions": {
+    "untanglepy": "0.2.0",
+    "pandas": "3.0.6",
+    "numpy": "2.5.4"
+  },
+  "python": "3.13.5",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "machine": "AMD64",
+  "processor": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",
+  "logical_cpus": 16,
+  "base_commit": "50c606ced43f5876b31e49fa653249ac493d305f",
+  "source_sha256_lf": {
+    "benchmarks/reproduce.py": "0dd5d879908a4c79d119cc56a1c58934da49872a6865e097f899a8e9baaa8391",
+    "benchmarks/benchmark.py": "a85af7126b9c34afe233a11c0a1abb328f341ed8abe4f3f0c854028e73df8d1b",
+    "examples/comparison.py": "ec07f9ed1d22fbc0a32ed9f79c7cfb755ee96ef33856e5ede86df51aad4c0c08",
+    "examples/cookbook.py": "6a75246980d907caf089954760f0f745a835d3cd309c7b0f5e6e8cbbf18fa6f2"
+  },
+  "command": "python benchmarks/reproduce.py --repeat 5",
+  "quick": false,
+  "repeats": 5,
+  "warmup_per_operation": 2,
+  "memory_repeats": 2,
+  "methodology": {
+    "time": "interleaved rotating order; perf_counter; GC collection before sample outside timer; input construction excluded",
+    "memory": "separate tracemalloc passes, result alive; Python allocation peak, not total RSS; input construction excluded",
+    "accuracy": "differential assertions before timing; comparison and cookbook assertions also executed",
+    "ease_of_use": "physical lines and AST statements in comparison functions, excluding fixtures and imports; a code-size proxy, not a user study",
+    "limitations": "deterministic synthetic workloads; one host; diagnostics differ in scope; no statistical confidence intervals or R execution comparison"
+  },
+  "comparison_code_size": {
+    "baseline": {
+      "physical_lines": 7,
+      "statements": 6
+    },
+    "library": {
+      "physical_lines": 2,
+      "statements": 1
+    }
+  },
+  "workloads": [
+    {
+      "input_size": 1000,
+      "accuracy": {
+        "output_rows": 980,
+        "values_equal": true
+      },
+      "measurements": {
+        "baseline": {
+          "seconds": [
+            0.0024831999999150867,
+            0.0022391000002244255,
+            0.0021019000005253474,
+            0.002005999999710184,
+            0.0020039999999426072
+          ],
+          "median_seconds": 0.0021019000005253474,
+          "min_seconds": 0.0020039999999426072,
+          "max_seconds": 0.0024831999999150867,
+          "traced_peak_bytes": [
+            72150,
+            71550
+          ],
+          "median_peak_bytes": 71850.0
+        },
+        "untanglepy": {
+          "seconds": [
+            0.0031853000000410248,
+            0.0030508999998346553,
+            0.0029856999999537948,
+            0.003265399999690999,
+            0.003128100000139966
+          ],
+          "median_seconds": 0.003128100000139966,
+          "min_seconds": 0.0029856999999537948,
+          "max_seconds": 0.003265399999690999,
+          "traced_peak_bytes": [
+            260990,
+            259102
+          ],
+          "median_peak_bytes": 260046.0
+        }
+      }
+    },
+    {
+      "input_size": 10000,
+      "accuracy": {
+        "output_rows": 9800,
+        "values_equal": true
+      },
+      "measurements": {
+        "baseline": {
+          "seconds": [
+            0.00872099999924103,
+            0.008547499999622232,
+            0.008577999999943131,
+            0.00800359999993816,
+            0.009901399999762361
+          ],
+          "median_seconds": 0.008577999999943131,
+          "min_seconds": 0.00800359999993816,
+          "max_seconds": 0.009901399999762361,
+          "traced_peak_bytes": [
+            540922,
+            540346
+          ],
+          "median_peak_bytes": 540634.0
+        },
+        "untanglepy": {
+          "seconds": [
+            0.02170769999975164,
+            0.023242799999934505,
+            0.021645300000272982,
+            0.02154530000007071,
+            0.021558899999945424
+          ],
+          "median_seconds": 0.021645300000272982,
+          "min_seconds": 0.02154530000007071,
+          "max_seconds": 0.023242799999934505,
+          "traced_peak_bytes": [
+            2606874,
+            2605018
+          ],
+          "median_peak_bytes": 2605946.0
+        }
+      }
+    },
+    {
+      "input_size": 50000,
+      "accuracy": {
+        "output_rows": 49000,
+        "values_equal": true
+      },
+      "measurements": {
+        "baseline": {
+          "seconds": [
+            0.03961230000004434,
+            0.03470440000000963,
+            0.03449530000034429,
+            0.03491850000045815,
+            0.03442590000031487
+          ],
+          "median_seconds": 0.03470440000000963,
+          "min_seconds": 0.03442590000031487,
+          "max_seconds": 0.03961230000004434,
+          "traced_peak_bytes": [
+            2624922,
+            2624346
+          ],
+          "median_peak_bytes": 2624634.0
+        },
+        "untanglepy": {
+          "seconds": [
+            0.11319300000013754,
+            0.10654780000004394,
+            0.11160099999960948,
+            0.11138669999945705,
+            0.11896780000006402
+          ],
+          "median_seconds": 0.11160099999960948,
+          "min_seconds": 0.10654780000004394,
+          "max_seconds": 0.11896780000006402,
+          "traced_peak_bytes": [
+            12945850,
+            12943994
+          ],
+          "median_peak_bytes": 12944922.0
+        }
+      }
+    }
+  ]
+}
