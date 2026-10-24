@@ -1,0 +1,27 @@
+name: Optional examples
+on:
+  push:
+    paths:
+      - "examples/notebooks/**"
+      - "tests/test_pyjanitor_example.py"
+      - "src/**"
+      - "pyproject.toml"
+      - ".github/workflows/examples.yml"
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  pyjanitor-marimo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+      - run: python -m pip install -e ".[dev,examples]" "marimo==0.25.2" "pandas==3.1.0" "pyjanitor==0.32.56"
+      - run: python -m marimo check --strict examples/notebooks/untanglepy_pyjanitor.py
+      - run: python examples/notebooks/untanglepy_pyjanitor.py
+      - run: python -m pytest tests/test_pyjanitor_example.py -q

@@ -61,6 +61,11 @@ python examples/comparison.py
 python examples/cookbook.py
 ```
 
+An optional [Marimo integration prototype](docs/pyjanitor-example.md) adapts the
+regional catalog recipe, applies pyjanitor's `clean_names`, and checks both
+values and source-row contributors against pandas. It is pending upstream
+scope review; install the `examples` extra only to run this integration.
+
 ## Measured performance, accuracy and usability
 
 Recorded on Windows-11-10.0.26200-SP0, CPython 3.13.5, with five rotating timed rounds. At the largest measured input size (50,000; see workload definition):
